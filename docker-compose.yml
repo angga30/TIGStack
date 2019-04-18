@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+    telegraf:
+        image: telegraf
+        deploy:
+            replicas: 2
+            restart_policy:
+                condition: on-failure
+        volumes:
+            - ./volumes/config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+            - ./volumes/config/telegraf.d:/etc/telegraf/telegraf.d:ro
+        depends_on:
+            - influxdb
+
+
+    influxdb:
+        image: influxdb:latest
+        deploy:
+            restart_policy:
+                condition: on-failure
+        volumes:
+            - ./volumes/influxdb:/var/lib/influxdb:rw
+        ports:
+            - 8086:8086
+            - 8083:8083
+        environment:
+            - INFLUXDB_ADMIN_USER=
+            - INFLUXDB_ADMIN_PASSWORD=
+
+    grafana:
+        image: grafana/grafana:latest
+        deploy:
+            restart_policy:
+                condition: on-failure
+        volumes:
+            - ./volumes/grafana:/var/lib/grafana:rw
+        ports:
+            - 3000:3000
+        depends_on:
+            - influxdb
