@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+    influxdb:
+        image: influxdb:latest
+        deploy:
+            restart_policy:
+                condition: on-failure
+        volumes:
+            - ./volumes/influxdb:/var/lib/influxdb:rw
+        ports:
+            - 8086:8086
+            - 8083:8083
+        environment:
+            - INFLUXDB_ADMIN_USER=root
+            - INFLUXDB_ADMIN_PASSWORD=jangkrik
+    chronf:
+        image: chronograf
+        deploy:
+            restart_policy:
+                  condition: on-failure
+        volumes:
+            - ./volumes/chrono:/var/lib/chronograf
+        ports:
+            - 10001:8888
+

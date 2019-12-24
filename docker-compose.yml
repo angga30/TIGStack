@@ -1,19 +1,6 @@
-version: '3.7'
+version: '3.3'
 
 services:
-    telegraf:
-        image: telegraf
-        deploy:
-            replicas: 2
-            restart_policy:
-                condition: on-failure
-        volumes:
-            - ./volumes/config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-            - ./volumes/config/telegraf.d:/etc/telegraf/telegraf.d:ro
-        depends_on:
-            - influxdb
-
-
     influxdb:
         image: influxdb:latest
         deploy:
@@ -25,17 +12,18 @@ services:
             - 8086:8086
             - 8083:8083
         environment:
-            - INFLUXDB_ADMIN_USER=
-            - INFLUXDB_ADMIN_PASSWORD=
+            - INFLUXDB_ADMIN_USER=root
+            - INFLUXDB_ADMIN_PASSWORD=jangkrik
 
     grafana:
-        image: grafana/grafana:latest
+        image: grafana/grafana:5.0.0 
         deploy:
             restart_policy:
-                condition: on-failure
+                 condition: on-failure
         volumes:
-            - ./volumes/grafana:/var/lib/grafana:rw
+            - ./volumes/grafana:/var/lib/grafana
         ports:
-            - 3000:3000
-        depends_on:
-            - influxdb
+            - 4500:3000
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=air0805.
+            - GF_AUTH_ANONYMOUS_ENABLED=true
